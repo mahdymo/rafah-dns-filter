@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - DNS Filter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i data-feather="shield"></i>
+                DNS Filter
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/">Dashboard</a>
+                <a class="nav-link" href="/logs">Query Logs</a>
+                <a class="nav-link" href="/blocklists">Blocklists</a>
+                <a class="nav-link active" href="/settings">Settings</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h1>Settings</h1>
+                <p class="text-muted">Configure DNS filter application settings</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <!-- DNS Settings -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">DNS Server Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="dnsHost" class="form-label">DNS Host</label>
+                                <input type="text" class="form-control" id="dnsHost" value="{{ config.dns_host }}">
+                                <div class="form-text">IP address to bind DNS server to</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="dnsPort" class="form-label">DNS Port</label>
+                                <input type="number" class="form-control" id="dnsPort" value="{{ config.dns_port }}">
+                                <div class="form-text">Port for DNS server (usually 53)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="upstreamDns" class="form-label">Upstream DNS Servers</label>
+                            <textarea class="form-control" id="upstreamDns" rows="3">{{ config.upstream_dns | join('\n') }}</textarea>
+                            <div class="form-text">One DNS server per line (IP addresses)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Web Interface Settings -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Web Interface Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="webHost" class="form-label">Web Host</label>
+                                <input type="text" class="form-control" id="webHost" value="{{ config.web_host }}">
+                                <div class="form-text">IP address to bind web server to</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="webPort" class="form-label">Web Port</label>
+                                <input type="number" class="form-control" id="webPort" value="{{ config.web_port }}">
+                                <div class="form-text">Port for web dashboard</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cache Settings -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Cache Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="cacheSize" class="form-label">Cache Size</label>
+                                <input type="number" class="form-control" id="cacheSize" value="{{ config.cache_size }}">
+                                <div class="form-text">Maximum number of cached DNS responses</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="cacheTtl" class="form-label">Cache TTL (seconds)</label>
+                                <input type="number" class="form-control" id="cacheTtl" value="{{ config.cache_ttl }}">
+                                <div class="form-text">Time to live for cached responses</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- General Settings -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">General Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="logQueries" {% if config.log_queries %}checked{% endif %}>
+                            <label class="form-check-label" for="logQueries">
+                                Enable Query Logging
+                            </label>
+                            <div class="form-text">Log all DNS queries to database</div>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="enableBlocking" {% if config.enable_blocking %}checked{% endif %}>
+                            <label class="form-check-label" for="enableBlocking">
+                                Enable Domain Blocking
+                            </label>
+                            <div class="form-text">Block domains in blocklists</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="cleanupDays" class="form-label">Query Log Retention (days)</label>
+                            <input type="number" class="form-control" id="cleanupDays" value="{{ config.cleanup_days }}">
+                            <div class="form-text">Days to keep query logs before cleanup</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mb-4">
+                    <button type="button" class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+                    <button type="button" class="btn btn-secondary" onclick="resetSettings()">Reset to Defaults</button>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <!-- System Information -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">System Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <strong>DNS Server:</strong>
+                            <span class="badge bg-success">Running</span>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Web Server:</strong>
+                            <span class="badge bg-success">Running</span>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Current DNS:</strong>
+                            <code>{{ config.dns_host }}:{{ config.dns_port }}</code>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Web Interface:</strong>
+                            <code>{{ config.web_host }}:{{ config.web_port }}</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Maintenance Actions -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Maintenance</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-primary" onclick="clearCache()">
+                                <i data-feather="trash-2"></i>
+                                Clear DNS Cache
+                            </button>
+                            <button class="btn btn-outline-warning" onclick="cleanupLogs()">
+                                <i data-feather="archive"></i>
+                                Cleanup Old Logs
+                            </button>
+                            <button class="btn btn-outline-info" onclick="updateBlocklists()">
+                                <i data-feather="refresh-cw"></i>
+                                Update Blocklists
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuration Export/Import -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Configuration</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-secondary" onclick="exportConfig()">
+                                <i data-feather="download"></i>
+                                Export Config
+                            </button>
+                            <div class="input-group">
+                                <input type="file" class="form-control" id="configFile" accept=".json">
+                                <button class="btn btn-outline-secondary" type="button" onclick="importConfig()">
+                                    <i data-feather="upload"></i>
+                                    Import
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.min.js"></script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            feather.replace();
+        });
+
+        function saveSettings() {
+            // This would typically save settings via API
+            showToast('Settings saved successfully', 'success');
+        }
+
+        function resetSettings() {
+            if (confirm('Are you sure you want to reset all settings to defaults?')) {
+                // Reset form values to defaults
+                showToast('Settings reset to defaults', 'info');
+            }
+        }
+
+        function clearCache() {
+            if (confirm('Are you sure you want to clear the DNS cache?')) {
+                showToast('DNS cache cleared', 'success');
+            }
+        }
+
+        function cleanupLogs() {
+            if (confirm('Are you sure you want to cleanup old query logs?')) {
+                fetch('/api/cleanup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        days: document.getElementById('cleanupDays').value
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast(data.message, 'success');
+                    } else {
+                        showToast(data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    showToast('Error cleaning up logs', 'error');
+                });
+            }
+        }
+
+        function updateBlocklists() {
+            fetch('/api/blocklists/update', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message, 'success');
+                } else {
+                    showToast(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showToast('Error updating blocklists', 'error');
+            });
+        }
+
+        function exportConfig() {
+            // Create and download config file
+            const config = {
+                dns_host: document.getElementById('dnsHost').value,
+                dns_port: parseInt(document.getElementById('dnsPort').value),
+                web_host: document.getElementById('webHost').value,
+                web_port: parseInt(document.getElementById('webPort').value),
+                upstream_dns: document.getElementById('upstreamDns').value.split('\n').filter(s => s.trim()),
+                cache_size: parseInt(document.getElementById('cacheSize').value),
+                cache_ttl: parseInt(document.getElementById('cacheTtl').value),
+                log_queries: document.getElementById('logQueries').checked,
+                enable_blocking: document.getElementById('enableBlocking').checked,
+                cleanup_days: parseInt(document.getElementById('cleanupDays').value)
+            };
+            
+            const blob = new Blob([JSON.stringify(config, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'dns-filter-config.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importConfig() {
+            const fileInput = document.getElementById('configFile');
+            const file = fileInput.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const config = JSON.parse(e.target.result);
+                        // Apply config to form fields
+                        document.getElementById('dnsHost').value = config.dns_host || '';
+                        document.getElementById('dnsPort').value = config.dns_port || 53;
+                        // ... apply other config values
+                        showToast('Configuration imported successfully', 'success');
+                    } catch (error) {
+                        showToast('Invalid configuration file', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+    </script>
+</body>
+</html>

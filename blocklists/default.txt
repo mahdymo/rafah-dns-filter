@@ -1,0 +1,145 @@
+# Default DNS Blocklist for Windows DNS Filter
+# This file contains a curated list of domains that are commonly blocked
+# for advertising, tracking, malware, and other unwanted content.
+#
+# Format: One domain per line
+# Comments start with #
+# Last updated: 2024-01-01
+
+# === ADVERTISING DOMAINS ===
+
+# Google Ads
+googleadservices.com
+googlesyndication.com
+googletagservices.com
+doubleclick.net
+google-analytics.com
+googletagmanager.com
+
+# Facebook/Meta Ads
+facebook.com
+connect.facebook.net
+graph.facebook.com
+
+# Amazon Ads
+amazon-adsystem.com
+assoc-amazon.com
+
+# Microsoft Ads
+ads.msn.com
+bing.com
+
+# General Ad Networks
+ads.yahoo.com
+adsystem.com
+advertising.com
+adsrvr.org
+adnxs.com
+adsafeprotected.com
+moatads.com
+scorecardresearch.com
+quantserve.com
+
+# === TRACKING DOMAINS ===
+
+# Analytics
+google-analytics.com
+googletagmanager.com
+hotjar.com
+mixpanel.com
+segment.com
+amplitude.com
+fullstory.com
+
+# Social Media Tracking
+facebook.com
+twitter.com
+linkedin.com
+pinterest.com
+instagram.com
+
+# General Tracking
+outbrain.com
+taboola.com
+criteo.com
+mouseflow.com
+crazyegg.com
+
+# === MALWARE AND SUSPICIOUS DOMAINS ===
+
+# Known Malware Domains
+malware-traffic-analysis.net
+malwaredomainlist.com
+phishtank.com
+openphish.com
+
+# Suspicious TLDs (common in malware)
+# Note: These are examples and should be used carefully
+suspicious-domain.tk
+suspicious-domain.ml
+suspicious-domain.ga
+suspicious-domain.cf
+
+# === CRYPTOCURRENCY MINING ===
+
+# Browser Mining Scripts
+coinhive.com
+jsecoin.com
+cryptoloot.pro
+webminerpool.com
+mineralt.io
+papoto.com
+reasedoper.pw
+
+# === UNWANTED SOFTWARE ===
+
+# Software Bundlers
+opencandy.com
+somoto.com
+installcore.com
+sweetpacks.com
+babylon.com
+
+# Potentially Unwanted Programs
+avg.com
+mcafee.com
+norton.com
+ccleaner.com
+
+# === ADULT CONTENT ===
+# Uncomment if you want to block adult content
+# pornhub.com
+# xvideos.com
+# xhamster.com
+# redtube.com
+# youporn.com
+
+# === GAMING AND ENTERTAINMENT BLOCKING ===
+# Uncomment if you want to block gaming sites
+# twitch.tv
+# steam.com
+# epicgames.com
+# origin.com
+# uplay.com
+
+# === SOCIAL MEDIA BLOCKING ===
+# Uncomment if you want to block social media
+# facebook.com
+# twitter.com
+# instagram.com
+# snapchat.com
+# tiktok.com
+# reddit.com
+
+# === NEWS AND MEDIA SITES ===
+# Uncomment if you want to block news sites during work hours
+# cnn.com
+# bbc.com
+# fox.com
+# reddit.com
+# youtube.com
+
+# === END OF DEFAULT BLOCKLIST ===
+# Total domains: ~50 active entries
+# This is a conservative list focusing on ads, tracking, and malware
+# Additional domains can be added via the web interface or by editing this file
