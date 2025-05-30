@@ -204,8 +204,8 @@
     
     <script>
         // Initialize charts with data
-        const hourlyStats = {{ hourly_stats | tojsonfilter }};
-        const stats = {{ stats | tojsonfilter }};
+        const hourlyStats = {{ hourly_stats | tojson }};
+        const stats = {{ stats | tojson }};
         
         // Initialize the dashboard
         document.addEventListener('DOMContentLoaded', function() {
