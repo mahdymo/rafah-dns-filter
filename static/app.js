@@ -387,7 +387,10 @@ function updateStatCards(stats) {
         cachedQueries: document.querySelector('.card.bg-success h4'),
         uniqueDomains: document.querySelector('.card.bg-info h4'),
         blockRate: document.querySelector('.card.bg-danger p'),
-        cacheRate: document.querySelector('.card.bg-success p')
+        cacheRate: document.querySelector('.card.bg-success p'),
+        bandwidthSaved: document.getElementById('bandwidthSaved'),
+        savingsPercent: document.getElementById('savingsPercent'),
+        totalBandwidth: document.getElementById('totalBandwidth')
     };
 
     if (elements.totalQueries) elements.totalQueries.textContent = stats.total_queries;
@@ -396,6 +399,17 @@ function updateStatCards(stats) {
     if (elements.uniqueDomains) elements.uniqueDomains.textContent = stats.unique_domains;
     if (elements.blockRate) elements.blockRate.textContent = `Blocked (${stats.block_rate}%)`;
     if (elements.cacheRate) elements.cacheRate.textContent = `Cached (${stats.cache_rate}%)`;
+    
+    // Update bandwidth statistics
+    if (elements.bandwidthSaved) {
+        elements.bandwidthSaved.textContent = formatBandwidth(stats.bandwidth_saved);
+    }
+    if (elements.savingsPercent) {
+        elements.savingsPercent.textContent = `${stats.bandwidth_savings_percent}%`;
+    }
+    if (elements.totalBandwidth) {
+        elements.totalBandwidth.textContent = formatBandwidth(stats.estimated_total_bandwidth);
+    }
 }
 
 /**
@@ -431,6 +445,19 @@ function formatFileSize(bytes) {
     if (bytes === 0) return '0 B';
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
+}
+
+/**
+ * Format bandwidth for display
+ */
+function formatBandwidth(bytes) {
+    if (bytes === 0) return '0 B';
+    
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    const formattedValue = (bytes / Math.pow(1024, i)).toFixed(2);
+    
+    return `${formattedValue} ${sizes[i]}`;
 }
 
 /**

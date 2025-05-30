@@ -97,6 +97,55 @@
             </div>
         </div>
 
+        <!-- Bandwidth Savings Cards -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card bg-gradient-warning text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="mb-0" id="bandwidthSaved">{{ (stats.bandwidth_saved / 1024) | round(2) }} KB</h4>
+                                <p class="mb-0">Bandwidth Saved</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i data-feather="trending-down" class="feather-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-gradient-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="mb-0" id="savingsPercent">{{ stats.bandwidth_savings_percent }}%</h4>
+                                <p class="mb-0">Savings Rate</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i data-feather="percent" class="feather-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-gradient-secondary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="mb-0" id="totalBandwidth">{{ (stats.estimated_total_bandwidth / 1024) | round(2) }} KB</h4>
+                                <p class="mb-0">Total Bandwidth</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i data-feather="bar-chart-2" class="feather-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Charts Row -->
         <div class="row mb-4">
             <div class="col-md-8">

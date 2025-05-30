@@ -44,6 +44,13 @@ class WebDashboard:
             stats = self.database.get_query_stats(hours)
             return jsonify(stats)
         
+        @self.app.route('/api/bandwidth-stats')
+        def api_bandwidth_stats():
+            """API endpoint for detailed bandwidth statistics"""
+            hours = request.args.get('hours', 24, type=int)
+            stats = self.database.get_query_stats(hours)
+            return jsonify(stats)
+        
         @self.app.route('/api/hourly-stats')
         def api_hourly_stats():
             """API endpoint for hourly statistics"""

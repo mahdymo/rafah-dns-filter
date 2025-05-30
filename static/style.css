@@ -51,8 +51,23 @@ body {
 .card.bg-primary,
 .card.bg-success,
 .card.bg-danger,
-.card.bg-info {
+.card.bg-info,
+.card.bg-gradient-warning,
+.card.bg-gradient-success,
+.card.bg-gradient-secondary {
     border: none;
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%) !important;
+}
+
+.bg-gradient-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+}
+
+.bg-gradient-secondary {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
 }
 
 .feather-icon {

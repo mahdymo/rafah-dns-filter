@@ -14,6 +14,10 @@ class Database:
     def __init__(self, db_path="dns_filter.db"):
         self.db_path = db_path
         self.lock = threading.RLock()
+    
+    def _get_connection(self):
+        """Get database connection"""
+        return sqlite3.connect(self.db_path)
         
     def initialize(self):
         """Initialize database tables"""
@@ -30,9 +34,16 @@ class Database:
                         client_ip TEXT NOT NULL,
                         blocked INTEGER DEFAULT 0,
                         cached INTEGER DEFAULT 0,
-                        response_time REAL DEFAULT 0
+                        response_time REAL DEFAULT 0,
+                        bytes_saved INTEGER DEFAULT 0
                     )
                 ''')
+                
+                # Add bytes_saved column if it doesn't exist (for existing databases)
+                try:
+                    conn.execute('ALTER TABLE queries ADD COLUMN bytes_saved INTEGER DEFAULT 0')
+                except sqlite3.OperationalError:
+                    pass  # Column already exists
                 
                 # Create settings table
                 conn.execute('''
@@ -66,16 +77,16 @@ class Database:
             finally:
                 conn.close()
     
-    def log_query(self, domain, query_type, client_ip, blocked=False, cached=False, response_time=0):
+    def log_query(self, domain, query_type, client_ip, blocked=False, cached=False, response_time=0, bytes_saved=0):
         """Log a DNS query"""
         with self.lock:
             try:
                 conn = sqlite3.connect(self.db_path)
                 conn.execute('''
-                    INSERT INTO queries (timestamp, domain, query_type, client_ip, blocked, cached, response_time)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO queries (timestamp, domain, query_type, client_ip, blocked, cached, response_time, bytes_saved)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 ''', (int(time.time()), domain, query_type, client_ip, 
-                      1 if blocked else 0, 1 if cached else 0, response_time))
+                      1 if blocked else 0, 1 if cached else 0, response_time, bytes_saved))
                 conn.commit()
                 conn.close()
             except Exception as e:
@@ -126,6 +137,22 @@ class Database:
                 ''', (since_timestamp,))
                 top_domains = cursor.fetchall()
                 
+                # Bandwidth savings calculations
+                cursor = conn.execute('SELECT SUM(bytes_saved) FROM queries WHERE timestamp > ?', (since_timestamp,))
+                total_bytes_saved = cursor.fetchone()[0] or 0
+                
+                # Estimated bandwidth usage (approximate calculations)
+                # Average DNS response size: 100 bytes
+                # Average blocked request savings: 1KB (prevents HTTP request)
+                # Average cached response savings: 50 bytes (no upstream query)
+                dns_response_size = 100
+                blocked_request_savings = 1024  # 1KB per blocked request
+                cached_response_savings = 50    # 50 bytes per cached response
+                
+                estimated_total_bandwidth = (total_queries * dns_response_size) + (blocked_queries * blocked_request_savings)
+                bandwidth_saved = (blocked_queries * blocked_request_savings) + (cached_queries * cached_response_savings) + total_bytes_saved
+                bandwidth_savings_percent = round((bandwidth_saved / max(estimated_total_bandwidth, 1) * 100), 2)
+                
                 conn.close()
                 
                 return {
@@ -136,7 +163,10 @@ class Database:
                     'block_rate': round((blocked_queries / total_queries * 100) if total_queries > 0 else 0, 2),
                     'cache_rate': round((cached_queries / total_queries * 100) if total_queries > 0 else 0, 2),
                     'top_blocked': [{'domain': row[0], 'count': row[1]} for row in top_blocked],
-                    'top_domains': [{'domain': row[0], 'count': row[1]} for row in top_domains]
+                    'top_domains': [{'domain': row[0], 'count': row[1]} for row in top_domains],
+                    'bandwidth_saved': bandwidth_saved,
+                    'bandwidth_savings_percent': bandwidth_savings_percent,
+                    'estimated_total_bandwidth': estimated_total_bandwidth
                 }
                 
             except Exception as e:
@@ -149,7 +179,10 @@ class Database:
                     'block_rate': 0,
                     'cache_rate': 0,
                     'top_blocked': [],
-                    'top_domains': []
+                    'top_domains': [],
+                    'bandwidth_saved': 0,
+                    'bandwidth_savings_percent': 0,
+                    'estimated_total_bandwidth': 0
                 }
     
     def get_recent_queries(self, limit=100):

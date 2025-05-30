@@ -23,34 +23,52 @@ class DNSFilterResolver(BaseResolver):
     def resolve(self, request, handler):
         """Resolve DNS query with filtering and caching"""
         try:
+            start_time = time.time()
+            
             # Parse the request
             query = request.get_q()
             qname = str(query.qname).rstrip('.')
             qtype = QTYPE[query.qtype]
             
-            # Log the query
+            # Log the initial query
             client_ip = handler.client_address[0] if handler else "unknown"
-            self.database.log_query(qname, qtype, client_ip)
             
             # Check if domain is blocked
             if self.blocklist_manager.is_blocked(qname):
-                self.database.log_query(qname, qtype, client_ip, blocked=True)
+                response_time = (time.time() - start_time) * 1000  # Convert to milliseconds
+                # Estimate bandwidth saved by blocking (prevents HTTP requests)
+                bytes_saved = 1024  # Average 1KB saved per blocked request
+                self.database.log_query(qname, qtype, client_ip, blocked=True, 
+                                      response_time=response_time, bytes_saved=bytes_saved)
                 return self._create_blocked_response(request)
             
             # Check cache first
             cache_key = f"{qname}:{qtype}"
             cached_response = self.cache.get(cache_key)
             if cached_response:
-                self.database.log_query(qname, qtype, client_ip, cached=True)
+                response_time = (time.time() - start_time) * 1000
+                # Estimate bandwidth saved by caching (no upstream query)
+                bytes_saved = 50  # Average 50 bytes saved per cached response
+                self.database.log_query(qname, qtype, client_ip, cached=True,
+                                      response_time=response_time, bytes_saved=bytes_saved)
                 return cached_response
             
             # Forward to upstream DNS
             response = self._forward_query(request)
             if response:
+                response_time = (time.time() - start_time) * 1000
+                # Calculate response size for bandwidth tracking
+                response_size = len(response.pack()) if hasattr(response, 'pack') else 100
+                
                 # Cache the response
                 self.cache.set(cache_key, response, ttl=300)  # 5 minutes default TTL
+                
+                # Log successful query with bandwidth usage
+                self.database.log_query(qname, qtype, client_ip, response_time=response_time)
                 return response
             else:
+                response_time = (time.time() - start_time) * 1000
+                self.database.log_query(qname, qtype, client_ip, response_time=response_time)
                 return self._create_error_response(request)
                 
         except Exception as e:
