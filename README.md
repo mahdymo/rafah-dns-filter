@@ -44,17 +44,13 @@ The application calculates and displays:
 
 ## 🚀 Quick Start
 
-### Option 1: Clone Repository
+### Clone Repository
 ```bash
 git clone https://github.com/yourusername/dns-filter.git
 cd dns-filter
 pip install -r requirements.txt
 python main.py
 ```
-
-### Option 2: Download Release
-1. Download the latest release from [Releases](https://github.com/yourusername/dns-filter/releases)
-2. Extract and run the setup script for your platform
 
 ### Platform-Specific Setup
 
