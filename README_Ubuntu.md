@@ -4,7 +4,7 @@ A Pi-hole inspired DNS filtering application optimized for Ubuntu and other Linu
 
 ## Key Differences from Windows Version
 
-- **Non-privileged DNS port**: Uses port 5353 instead of 53 (no root required for basic operation)
+- **Non-privileged DNS port**: Uses port 53 instead of 53 (no root required for basic operation)
 - **Systemd integration**: Optional system service configuration
 - **UFW firewall support**: Automatic firewall configuration
 - **Network Manager integration**: Easy DNS configuration helpers
@@ -43,10 +43,10 @@ Access the dashboard at `http://localhost:5000`
 ### DNS Testing Commands
 ```bash
 # Test basic DNS resolution
-dig @127.0.0.1 -p 5353 google.com
+dig @127.0.0.1 -p 53 google.com
 
 # Test blocking (should return NXDOMAIN)
-dig @127.0.0.1 -p 5353 facebook.com
+dig @127.0.0.1 -p 53 facebook.com
 
 # Test with nslookup
 nslookup google.com 127.0.0.1
@@ -56,7 +56,7 @@ tail -f dns_filter.db
 ```
 
 ### Browser Testing
-1. Configure your network connection to use `127.0.0.1:5353` as DNS
+1. Configure your network connection to use `127.0.0.1:53` as DNS
 2. Try visiting blocked domains (like facebook.com) - should be blocked
 3. Monitor activity in the web dashboard
 
@@ -72,15 +72,15 @@ sudo ./configure_dns.sh
 Use applications that support custom DNS servers:
 ```bash
 # Firefox: Set network.trr.uri to your DNS filter
-# Chrome: Start with --dns-server=127.0.0.1:5353
-# dig: dig @127.0.0.1 -p 5353 example.com
+# Chrome: Start with --dns-server=127.0.0.1:53
+# dig: dig @127.0.0.1 -p 53 example.com
 ```
 
 ### Option 3: NetworkManager GUI
 1. Open Network Settings
 2. Click your connection settings
 3. Go to IPv4 tab
-4. Set DNS servers to: `127.0.0.1:5353, 8.8.8.8`
+4. Set DNS servers to: `127.0.0.1:53, 8.8.8.8`
 
 ## System Service (Optional)
 
@@ -102,12 +102,12 @@ sudo journalctl -u dns-filter -f
 The setup script automatically configures UFW:
 ```bash
 sudo ufw allow 5000/tcp  # Web dashboard
-sudo ufw allow 5353/udp  # DNS service
+sudo ufw allow 53/udp  # DNS service
 ```
 
 ### Running as Non-root
 The application runs on non-privileged ports by default:
-- DNS: Port 5353 (instead of 53)
+- DNS: Port 53 (instead of 53)
 - Web: Port 5000
 
 ### File Permissions
@@ -142,8 +142,8 @@ htop -p $(pgrep -f "python3 main.py")
 ### Port Already in Use
 ```bash
 # Check what's using the port
-sudo netstat -tulpn | grep :5353
-sudo lsof -i :5353
+sudo netstat -tulpn | grep :53
+sudo lsof -i :53
 
 # Kill conflicting process
 sudo systemctl stop systemd-resolved  # If needed
@@ -160,7 +160,7 @@ sudo setcap CAP_NET_BIND_SERVICE=+eip $(which python3)
 ```bash
 # Test DNS resolution
 dig @8.8.8.8 google.com  # Test upstream
-dig @127.0.0.1 -p 5353 google.com  # Test our filter
+dig @127.0.0.1 -p 53 google.com  # Test our filter
 
 # Check if service is running
 sudo systemctl status dns-filter
@@ -213,7 +213,7 @@ curl -X POST http://localhost:5000/api/blocklists \
 ### Docker Support (Future)
 ```bash
 # Docker run example (for future implementation)
-docker run -d -p 5000:5000 -p 5353:5353/udp dns-filter
+docker run -d -p 5000:5000 -p 53:53/udp dns-filter
 ```
 
 ## Support and Logs

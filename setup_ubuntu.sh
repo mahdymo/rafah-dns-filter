@@ -64,8 +64,8 @@ fi
 if command -v ufw &> /dev/null && [[ "$ROOT_ACCESS" == true ]]; then
     echo "Configuring firewall..."
     ufw allow 5000/tcp  # Web dashboard
-    ufw allow 5353/udp  # DNS server (non-privileged port)
-    echo "Firewall configured for ports 5000 (web) and 5353 (DNS)"
+    ufw allow 53/udp  # DNS server (non-privileged port)
+    echo "Firewall configured for ports 5000 (web) and 53 (DNS)"
 fi
 
 # Create startup script for non-root users
@@ -82,9 +82,9 @@ python3 -c "import dnslib, flask, requests" 2>/dev/null || {
 }
 
 # Start the application
-echo "Starting DNS server on port 5353 and web dashboard on port 5000..."
+echo "Starting DNS server on port 53 and web dashboard on port 5000..."
 echo "Access the dashboard at: http://localhost:5000"
-echo "Configure your system to use 127.0.0.1:5353 as DNS server"
+echo "Configure your system to use 127.0.0.1:53 as DNS server"
 echo ""
 echo "Press Ctrl+C to stop..."
 
@@ -117,7 +117,7 @@ if [[ $EUID -eq 0 ]]; then
         cat >> /etc/systemd/resolved.conf << EOL
 
 # DNS Filter Configuration
-DNS=127.0.0.1:5353
+DNS=127.0.0.1:53
 FallbackDNS=8.8.8.8 1.1.1.1
 DNSStubListener=no
 EOL
@@ -129,13 +129,13 @@ EOL
 else
     echo "1. Manual network configuration:"
     echo "   Go to Network Settings > Wired/Wireless > IPv4 Settings"
-    echo "   Set DNS servers to: 127.0.0.1:5353"
+    echo "   Set DNS servers to: 127.0.0.1:53"
     echo ""
 fi
 
 echo "2. Test DNS filtering with dig command:"
-echo "   dig @127.0.0.1 -p 5353 google.com"
-echo "   dig @127.0.0.1 -p 5353 facebook.com  # Should be blocked"
+echo "   dig @127.0.0.1 -p 53 google.com"
+echo "   dig @127.0.0.1 -p 53 facebook.com  # Should be blocked"
 echo ""
 
 echo "3. Browser testing:"
@@ -191,7 +191,7 @@ echo ""
 echo "=== Setup Complete ==="
 echo ""
 echo "Ubuntu DNS Filter has been configured with the following:"
-echo "• DNS server will run on port 5353 (non-privileged)"
+echo "• DNS server will run on port 53 (non-privileged)"
 echo "• Web dashboard will run on port 5000"
 echo "• Firewall configured (if UFW is installed)"
 echo ""
@@ -209,4 +209,4 @@ echo "• /etc/systemd/system/dns-filter.service - System service"
 fi
 echo ""
 echo "For testing without system changes:"
-echo "dig @127.0.0.1 -p 5353 google.com"
+echo "dig @127.0.0.1 -p 53 google.com"

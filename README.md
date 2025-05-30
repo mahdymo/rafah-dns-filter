@@ -1,4 +1,4 @@
-# DNS Filter
+# Rafah DNS Filter
 
 A cross-platform DNS filtering application inspired by Pi-hole, providing DNS query interception, caching, bandwidth monitoring, and blocking capabilities with a modern web dashboard.
 
@@ -30,7 +30,7 @@ The application calculates and displays:
 - Native Windows installer support
 
 ### Linux/Ubuntu
-- DNS server on port 5353 (non-privileged)
+- DNS server on port 53 (non-privileged)
 - Systemd service integration
 - UFW firewall configuration
 
@@ -87,7 +87,7 @@ Access the dashboard at `http://localhost:5000`
 ```json
 {
   "dns_host": "0.0.0.0",
-  "dns_port": 5353,
+  "dns_port": 53
   "web_host": "0.0.0.0",
   "web_port": 5000,
   "upstream_dns": ["8.8.8.8", "8.8.4.4", "1.1.1.1"],
@@ -114,10 +114,10 @@ adguard_dns = "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.tx
 ### DNS Resolution Testing
 ```bash
 # Test allowed domain
-dig @127.0.0.1 -p 5353 google.com
+dig @127.0.0.1 -p 53 google.com
 
 # Test blocked domain (should return NXDOMAIN)
-dig @127.0.0.1 -p 5353 facebook.com
+dig @127.0.0.1 -p 53 facebook.com
 ```
 
 ### Bandwidth Monitoring Test
@@ -194,7 +194,7 @@ python main.py
 **Port Already in Use**
 ```bash
 # Check what's using the port
-sudo netstat -tulpn | grep :5353
+sudo netstat -tulpn | grep :53
 ```
 
 **Permission Denied**
