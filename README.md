@@ -98,6 +98,8 @@ Access the dashboard at `http://localhost:5000`
 
 ### Blocklist Configuration
 
+![](static/feedlist.png)
+
 Add remote blocklists via the web interface or directly in the database:
 
 ```python
