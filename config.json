@@ -1,6 +1,6 @@
 {
   "dns_host": "0.0.0.0",
-  "dns_port": 5353,
+  "dns_port": 53,
   "web_host": "0.0.0.0",
   "web_port": 5000,
   "upstream_dns": [
