@@ -1,0 +1,121 @@
+# DNS Filter Application - Git Ignore File
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.pythonlibs/
+
+# Database Files
+*.db
+*.sqlite
+*.sqlite3
+dns_filter.db*
+
+# Log Files
+*.log
+logs/
+*.out
+
+# Configuration Files (sensitive)
+config.local.json
+.secrets
+.env.local
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary Files
+*.tmp
+*.temp
+.cache/
+.pytest_cache/
+
+# Node.js (if using for frontend tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Coverage Reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Documentation Build
+docs/_build/
+site/
+
+# Docker
+.dockerignore
+Dockerfile.*
+docker-compose.override.yml
+
+# Backup Files
+*.backup
+*.bak
+backup/
+
+# Runtime Files
+*.pid
+*.sock
+*.lock
+
+# Custom Blocklists (keep default, ignore custom)
+blocklists/custom_*.txt
+blocklists/personal.txt
+
+# Certificates and Keys
+*.pem
+*.key
+*.crt
+*.cert
+certificates/

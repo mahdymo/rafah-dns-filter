@@ -1,64 +1,93 @@
-# Windows DNS Filter
+# DNS Filter
 
-A Windows-compatible DNS filtering application inspired by Pi-hole, providing DNS query interception, caching, and blocking capabilities with a modern web dashboard.
+A cross-platform DNS filtering application inspired by Pi-hole, providing DNS query interception, caching, bandwidth monitoring, and blocking capabilities with a modern web dashboard.
 
-## Features
+## 🌟 Features
 
-- **DNS Query Interception**: Intercepts and filters DNS queries on Windows systems
+- **DNS Query Filtering**: Intercepts and filters DNS queries with custom blocklists
 - **Advanced Caching**: In-memory DNS response caching with TTL support
-- **Web Dashboard**: Modern, responsive web interface for monitoring and management
+- **Bandwidth Monitoring**: Track data usage and savings from blocking and caching
+- **Web Dashboard**: Modern, responsive web interface with real-time statistics
 - **Blocklist Management**: Support for local and remote blocklists with automatic updates
-- **Query Logging**: Comprehensive logging of all DNS queries with statistics
-- **Real-time Monitoring**: Live dashboard with charts and statistics
-- **Domain Management**: Easy blocking/unblocking of individual domains
-- **Windows Service Ready**: Can be configured to run as a Windows service
+- **Query Logging**: Comprehensive logging with detailed analytics
+- **Real-time Monitoring**: Live dashboard with interactive charts
+- **Cross-platform**: Works on Windows, Linux (Ubuntu), and macOS
+- **Performance Analytics**: Response time tracking and cache efficiency metrics
 
-## System Requirements
+## 📊 Bandwidth Savings
 
-- **Operating System**: Windows 10/11 or Windows Server 2016+
-- **Python**: Python 3.8 or higher
+The application calculates and displays:
+- **Data saved** through domain blocking (prevents HTTP requests)
+- **Cache efficiency** savings (reduces upstream DNS queries)
+- **Percentage savings** with detailed breakdowns
+- **Real-time bandwidth** usage monitoring
+
+## 🖥️ Platform Support
+
+### Windows
+- DNS server on port 53 (requires administrator privileges)
+- Windows Service integration
+- Native Windows installer support
+
+### Linux/Ubuntu
+- DNS server on port 5353 (non-privileged)
+- Systemd service integration
+- UFW firewall configuration
+
+## 📋 System Requirements
+
+- **Python**: 3.8 or higher
 - **Memory**: Minimum 512MB RAM (1GB recommended)
 - **Storage**: 100MB free disk space
-- **Network**: Administrator privileges required for DNS port binding (port 53)
+- **Network**: Internet connection for blocklist updates
 
-## Installation
+## 🚀 Quick Start
 
-### Prerequisites
+### Option 1: Clone Repository
+```bash
+git clone https://github.com/yourusername/dns-filter.git
+cd dns-filter
+pip install -r requirements.txt
+python main.py
+```
 
-1. **Install Python 3.8+** from [python.org](https://python.org)
-2. **Run as Administrator** (required for DNS port binding)
+### Option 2: Download Release
+1. Download the latest release from [Releases](https://github.com/yourusername/dns-filter/releases)
+2. Extract and run the setup script for your platform
 
-### Quick Installation
+### Platform-Specific Setup
 
-1. **Clone or download** the application files to a directory (e.g., `C:\DNSFilter`)
+#### Windows
+```bash
+pip install dnslib flask requests
+python main.py
+```
 
-2. **Install Python dependencies**:
-   ```bash
-   pip install dnslib flask requests
-   ```
+#### Ubuntu/Linux
+```bash
+chmod +x setup_ubuntu.sh
+./setup_ubuntu.sh
+```
 
-3. **Configure Windows DNS** (optional but recommended):
-   - Open Network Adapter settings
-   - Set primary DNS to `127.0.0.1` (localhost)
-   - Set secondary DNS to `8.8.8.8` (Google DNS as fallback)
+## 🌐 Web Dashboard
 
-4. **Run the application**:
-   ```bash
-   python main.py
-   ```
+Access the dashboard at `http://localhost:5000`
 
-5. **Access the dashboard** at: `http://localhost:5000`
+### Dashboard Features
+- Real-time DNS query statistics
+- Bandwidth usage and savings metrics
+- Interactive charts and graphs
+- Blocklist management interface
+- Query logs with filtering options
+- System configuration settings
 
-## Configuration
+## ⚙️ Configuration
 
-### Main Configuration File (`config.json`)
-
-The application can be configured via the `config.json` file:
-
+### Main Configuration (`config.json`)
 ```json
 {
-  "dns_host": "127.0.0.1",
-  "dns_port": 53,
+  "dns_host": "0.0.0.0",
+  "dns_port": 5353,
   "web_host": "0.0.0.0",
   "web_port": 5000,
   "upstream_dns": ["8.8.8.8", "8.8.4.4", "1.1.1.1"],
@@ -68,3 +97,141 @@ The application can be configured via the `config.json` file:
   "enable_blocking": true,
   "cleanup_days": 30
 }
+```
+
+### Blocklist Configuration
+
+Add remote blocklists via the web interface or directly in the database:
+
+```python
+# Popular blocklists
+steven_black = "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
+adguard_dns = "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt"
+```
+
+## 🧪 Testing
+
+### DNS Resolution Testing
+```bash
+# Test allowed domain
+dig @127.0.0.1 -p 5353 google.com
+
+# Test blocked domain (should return NXDOMAIN)
+dig @127.0.0.1 -p 5353 facebook.com
+```
+
+### Bandwidth Monitoring Test
+1. Access the dashboard at `http://localhost:5000`
+2. Generate DNS queries to see real-time statistics
+3. Monitor bandwidth savings metrics
+
+## 📁 Project Structure
+
+```
+dns-filter/
+├── main.py                 # Application entry point
+├── dns_server.py           # DNS server implementation
+├── web_dashboard.py        # Flask web interface
+├── database.py             # SQLite database manager
+├── blocklist_manager.py    # Blocklist handling
+├── dns_cache.py            # DNS response caching
+├── bandwidth_monitor.py    # Bandwidth tracking
+├── config.py               # Configuration manager
+├── config.json             # Main configuration file
+├── requirements.txt        # Python dependencies
+├── setup_ubuntu.sh         # Ubuntu setup script
+├── templates/              # HTML templates
+│   ├── index.html          # Main dashboard
+│   ├── logs.html           # Query logs page
+│   ├── blocklists.html     # Blocklist management
+│   └── settings.html       # Configuration settings
+├── static/                 # Static web assets
+│   ├── style.css           # Application styles
+│   └── app.js              # JavaScript functionality
+├── blocklists/             # Default blocklist files
+│   └── default.txt         # Default blocked domains
+└── docs/                   # Documentation
+    ├── installation.md     # Installation guide
+    ├── configuration.md    # Configuration reference
+    └── api.md              # API documentation
+```
+
+## 🔧 Development
+
+### Local Development Setup
+```bash
+git clone https://github.com/yourusername/dns-filter.git
+cd dns-filter
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python main.py
+```
+
+### Contributing
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📊 API Endpoints
+
+### Statistics API
+- `GET /api/stats` - Get query statistics
+- `GET /api/hourly-stats` - Get hourly breakdown
+- `GET /api/bandwidth-stats` - Get bandwidth metrics
+
+### Management API
+- `POST /api/domain/block` - Block a domain
+- `POST /api/domain/unblock` - Unblock a domain
+- `POST /api/blocklists/update` - Update blocklists
+
+## 🛠️ Troubleshooting
+
+### Common Issues
+
+**Port Already in Use**
+```bash
+# Check what's using the port
+sudo netstat -tulpn | grep :5353
+```
+
+**Permission Denied**
+```bash
+# For DNS port binding on Linux
+sudo setcap CAP_NET_BIND_SERVICE=+eip $(which python3)
+```
+
+**Web Dashboard Not Accessible**
+- Check firewall settings
+- Verify the application is running
+- Ensure port 5000 is not blocked
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Inspired by [Pi-hole](https://pi-hole.net/)
+- Built with [Flask](https://flask.palletsprojects.com/) and [dnslib](https://github.com/paulc/dnslib)
+- UI components from [Bootstrap](https://getbootstrap.com/)
+
+## 🔗 Links
+
+- [Documentation](docs/)
+- [Issues](https://github.com/yourusername/dns-filter/issues)
+- [Discussions](https://github.com/yourusername/dns-filter/discussions)
+- [Wiki](https://github.com/yourusername/dns-filter/wiki)
+
+## 📈 Roadmap
+
+- [ ] Docker container support
+- [ ] Windows installer package
+- [ ] Mobile app for monitoring
+- [ ] Advanced filtering rules
+- [ ] Integration with threat intelligence feeds
+- [ ] Multi-user support with authentication
+- [ ] API rate limiting
+- [ ] Export/import configuration

@@ -1,0 +1,40 @@
+# DNS Filter Application - Python Dependencies
+
+# Core DNS Library
+dnslib==0.9.26
+
+# Web Framework
+Flask==3.1.1
+
+# HTTP Requests
+requests==2.32.3
+
+# Optional Dependencies (for enhanced features)
+# Uncomment as needed for additional functionality
+
+# Database ORM (alternative to SQLite direct access)
+# SQLAlchemy==2.0.25
+
+# Environment Variable Management
+# python-dotenv==1.0.0
+
+# Enhanced Logging
+# colorlog==6.8.0
+
+# Configuration Management
+# pyyaml==6.0.1
+
+# Performance Monitoring
+# psutil==5.9.6
+
+# Security (for future authentication features)
+# cryptography==41.0.8
+
+# Testing Framework
+# pytest==7.4.3
+# pytest-cov==4.1.0
+
+# Development Tools
+# black==23.11.0
+# flake8==6.1.0
+# mypy==1.7.1
