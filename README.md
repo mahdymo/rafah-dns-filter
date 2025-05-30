@@ -31,7 +31,7 @@ The application calculates and displays:
 - Native Windows installer support
 
 ### Linux/Ubuntu
-- DNS server on port 53 (non-privileged)
+- DNS server on port 53 
 - Systemd service integration
 - UFW firewall configuration
 
