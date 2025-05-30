@@ -2,6 +2,7 @@
 
 A cross-platform DNS filtering application inspired by Pi-hole, providing DNS query interception, caching, bandwidth monitoring, and blocking capabilities with a modern web dashboard.
 
+()[[static/dashboard]]
 ## 🌟 Features
 
 - **DNS Query Filtering**: Intercepts and filters DNS queries with custom blocklists
