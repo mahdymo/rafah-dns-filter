@@ -21,11 +21,11 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "pip install dnslib flask requests && python main.py"
+args = "python3 main.py"
 waitForPort = 5000
 
 [deployment]
-run = ["sh", "-c", "pip install dnslib flask requests && python main.py"]
+run = ["sh", "-c", "python3 main.py"]
 
 [[ports]]
 localPort = 5000
